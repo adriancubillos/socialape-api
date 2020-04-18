@@ -56,7 +56,7 @@ exports.signup = (req, res) => {
       if (err.code === 'auth/email-already-in-use') {
         return res.status(400).json({ email: err.message });
       } else {
-        return res.status(500).json({ error: err.code });
+        return res.status(500).json({ general: 'Something went wrong, please try again' });
       }
     });
 };
@@ -82,7 +82,7 @@ exports.login = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      if (err.code === 'auth/wrong-password') {
+      if (err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
         return res.status(403).json({ general: 'Invalid credentials. please try again' });
       } else {
         return res.status(500).json({ error: err.code });
@@ -121,13 +121,8 @@ exports.getUserDetails = (req, res) => {
       userData.screams = [];
       data.forEach((doc) => {
         userData.screams.push({
-          body: doc.data().body,
-          commentCount: doc.data().commentCount,
-          createdAt: doc.data().createdAt,
-          likeCount: doc.data().likeCount,
-          userHandle: doc.data().userHandle,
-          userImage: doc.data().userImage,
           screamId: doc.id,
+          ...doc.data(),
         });
       });
       return res.json(userData);
