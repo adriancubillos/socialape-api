@@ -13,7 +13,7 @@ exports.signup = (req, res) => {
     email: req.body.email,
     password: req.body.password,
     confirmPassword: req.body.confirmPassword,
-    handle: req.body.handle,
+    handle: req.body.handle
   };
 
   const { valid, errors } = validateSignupData(newUser);
@@ -44,7 +44,7 @@ exports.signup = (req, res) => {
         email: newUser.email,
         createdAt: new Date().toISOString(),
         imageUrl: `https://firebasestorage.googleapis.com/v0/b/${firebaseConfig.storageBucket}/o/${noImage}?alt=media`,
-        userId,
+        userId
       };
       db.doc(`/users/${newUser.handle}`).set(userCredentials);
     })
@@ -65,7 +65,7 @@ exports.signup = (req, res) => {
 exports.login = (req, res) => {
   const user = {
     email: req.body.email,
-    password: req.body.password,
+    password: req.body.password
   };
 
   const { valid, errors } = validateLoginData(user);
@@ -82,7 +82,11 @@ exports.login = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      if (err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
+      if (
+        err.code === 'auth/wrong-password' ||
+        err.code === 'auth/invalid-email' ||
+        err.code === 'auth/user-not-found'
+      ) {
         return res.status(403).json({ general: 'Invalid credentials. please try again' });
       } else {
         return res.status(500).json({ error: err.code });
@@ -122,7 +126,7 @@ exports.getUserDetails = (req, res) => {
       data.forEach((doc) => {
         userData.screams.push({
           screamId: doc.id,
-          ...doc.data(),
+          ...doc.data()
         });
       });
       return res.json(userData);
@@ -167,7 +171,7 @@ exports.getAuthenticatedUser = (req, res) => {
           screamId: doc.data().screamId,
           type: doc.data().type,
           read: doc.data().read,
-          notificationId: doc.id,
+          notificationId: doc.id
         });
       });
       return res.json(userData);
@@ -210,9 +214,9 @@ exports.uploadImage = (req, res) => {
         resumable: false,
         metadata: {
           metadata: {
-            contentType: imageToBeUploaded.mime_type,
-          },
-        },
+            contentType: imageToBeUploaded.mime_type
+          }
+        }
       })
       .then(() => {
         const imageUrl = `https://firebasestorage.googleapis.com/v0/b/${firebaseConfig.storageBucket}/o/${imageFileName}?alt=media`;
