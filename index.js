@@ -1,5 +1,8 @@
 const functions = require('firebase-functions');
 const app = require('express')();
+const cors = require('cors');
+
+app.use(cors());
 
 const { db } = require('./util/admin');
 
@@ -10,7 +13,7 @@ const {
   getScream,
   likeScream,
   postOneScream,
-  unlikeScream,
+  unlikeScream
 } = require('./handlers/screams');
 
 const {
@@ -20,7 +23,7 @@ const {
   addUserDetails,
   getAuthenticatedUser,
   getUserDetails,
-  markNotificationsRead,
+  markNotificationsRead
 } = require('./handlers/users');
 
 const FBAuth = require('./util/fbAuth');
@@ -60,7 +63,7 @@ exports.createNotificationOnLike = functions.firestore.document('/likes/{id}').o
           sender: snapshot.data().userHandle,
           type: 'like',
           read: false,
-          screamId: doc.id,
+          screamId: doc.id
         });
       }
     })
@@ -91,7 +94,7 @@ exports.createNotificationOnComment = functions.firestore.document('/comments/{i
           sender: snapshot.data().userHandle,
           type: 'comment',
           read: false,
-          screamId: doc.id,
+          screamId: doc.id
         });
       }
     })
